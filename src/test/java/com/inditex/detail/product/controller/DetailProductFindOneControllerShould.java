@@ -2,7 +2,6 @@ package com.inditex.detail.product.controller;
 
 import com.inditex.detail.product.ApplicationConfigurationTest;
 import com.inditex.detail.product.DetailProductTestCase;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -17,7 +16,6 @@ class DetailProductFindOneControllerShould extends DetailProductTestCase {
 
   @Test
   void obtain_all_similar_products_for_one_product() throws Exception {
-
     Mockito.when(this.restApiSimilarservice.obtainSimilarProducts(Mockito.any()))
       .thenReturn(this.mockSimilarProducts);
 
@@ -41,17 +39,4 @@ class DetailProductFindOneControllerShould extends DetailProductTestCase {
     assertBadRequest("GET",  url,  400);
   }
 
-  @Test
-  @Disabled
-  void obtain_data_when_one_similar_of_id_product_is_not_found() throws  Exception{
-    /*Mockito.when(this.restApiSimilarservice.obtainSimilarProducts(Mockito.any()))
-      .thenReturn(this.mockSimilarProducts);mockBackEnd.enqueue();*/
-
-
-    String idProduct = "3";
-    String url = String.format("/product/%s/similar", idProduct);
-    String expectedResponse = "products";
-    assertResponse(url, 200, expectedResponse);
-
-  }
 }

@@ -3,6 +3,7 @@ package com.inditex.detail.product.service.impl;
 import com.inditex.detail.product.dto.ProductDetail;
 import com.inditex.detail.product.dto.SimilarProducts;
 import com.inditex.detail.product.service.RestApiSimilarservice;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -44,15 +45,16 @@ public final class JavaScriptRestApiSimilarService implements RestApiSimilarserv
 
   private List<String> obtainListSimilarProducts(String idProductDetail) {
 
-  String url = String.format("http://localhost:3001/product/%s/similarids", idProductDetail);
+    String urlSimilarProducts =
+      String.format("http://localhost:3001/product/%s/similarids", idProductDetail);
 
-    ResponseEntity<Object> responseEntity = this.invokeOtherApi(url, String[].class);
+    ResponseEntity<Object> responseEntity = this.invokeOtherApi(urlSimilarProducts, String[].class);
 
-    if (!HttpStatus.OK.equals(responseEntity.getStatusCode())){
+    if (!HttpStatus.OK.equals(responseEntity.getStatusCode())) {
       log.error("error {}", responseEntity.getStatusCode());
       return new ArrayList<>();
     }
-    String[] body = (String[])responseEntity.getBody();
+    String[] body = (String[]) responseEntity.getBody();
 
     List<String> listSimilarProducts = new ArrayList<>();
 
@@ -77,10 +79,10 @@ public final class JavaScriptRestApiSimilarService implements RestApiSimilarserv
 
     log.info(String.format("idProductDetail: %s", idProductDetail));
 
-    String url = String.format("http://localhost:3001/product/%s", idProductDetail);
-    log.info(String.format("url: %s", url));
+    String urlDetailProduct = String.format("http://localhost:3001/product/%s", idProductDetail);
+    log.info(String.format("url: %s", urlDetailProduct));
 
-    ResponseEntity<Object> responseEntity = this.invokeOtherApi(url, Object.class);
+    ResponseEntity<Object> responseEntity = this.invokeOtherApi(urlDetailProduct, Object.class);
 
     if (!HttpStatus.OK.equals(responseEntity.getStatusCode())){
       return new ProductDetail();
@@ -88,13 +90,19 @@ public final class JavaScriptRestApiSimilarService implements RestApiSimilarserv
     LinkedHashMap<String, ? extends Serializable> responseEntityBody =
       (LinkedHashMap<String, ? extends Serializable>) responseEntity.getBody();
 
+    return obtainDataProductDetail(responseEntityBody);
+
+  }
+
+  private ProductDetail obtainDataProductDetail(
+    LinkedHashMap<String, ? extends Serializable> responseEntityBody) {
+
     String idProduct = (String)responseEntityBody.get("id");
     String nameProduct = (String)responseEntityBody.get("name");
     Double priceProduct = (Double)responseEntityBody.get("price");
     Boolean availabilityProduct = (Boolean)responseEntityBody.get("availability");
 
     return new ProductDetail(idProduct, nameProduct,priceProduct, availabilityProduct);
-
   }
 
 }
